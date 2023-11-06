@@ -33,11 +33,8 @@ function App() {
     e.preventDefault();
 
     const dayValue = e.target[0].value;
-    console.log(dayValue);
     const monthValue = e.target[1].value;
-    console.log(monthValue);
     const yearValue = e.target[2].value;
-    console.log(yearValue);
 
     if (!dayValue || !monthValue || !yearValue) {
       setFormValid(false);
