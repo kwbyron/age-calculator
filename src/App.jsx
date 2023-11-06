@@ -4,27 +4,78 @@ function App() {
   const [inputDay, setInputDay] = useState("");
   const [inputMonth, setInputMonth] = useState("");
   const [inputYear, setInputYear] = useState("");
-  const [response, setResponse] = useState([]);
+  const [response, setResponse] = useState("");
+  const [formValid, setFormValid] = useState(true);
+  const [inputValid, setInputValid] = useState(true);
+  const [dateValid, setDateValid] = useState(true);
 
   function handleSetInputDay(e) {
     setInputDay((input) => e.target.value);
+    setFormValid(true);
+    setInputValid(true);
+    setDateValid(true);
   }
 
   function handleSetInputMonth(e) {
     setInputMonth((input) => e.target.value);
+    setFormValid(true);
+    setInputValid(true);
+    setDateValid(true);
   }
   function handleSetInputYear(e) {
     setInputYear((input) => e.target.value);
+    setFormValid(true);
+    setInputValid(true);
+    setDateValid(true);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    const newDate = [inputDay, inputMonth, inputYear];
-    setResponse((response) => newDate);
-    setInputDay("");
-    setInputMonth("");
-    setInputYear("");
-    console.log(response);
+
+    const dayValue = e.target[0].value;
+    console.log(dayValue);
+    const monthValue = e.target[1].value;
+    console.log(monthValue);
+    const yearValue = e.target[2].value;
+    console.log(yearValue);
+
+    if (!dayValue || !monthValue || !yearValue) {
+      setFormValid(false);
+      setResponse("");
+    } else if ((dayValue && dayValue < 1) || dayValue > 31) {
+      setInputValid(false);
+      setResponse("");
+    } else if ((monthValue && monthValue < 1) || monthValue > 12) {
+      setInputValid(false);
+      setResponse("");
+    } else if (yearValue && yearValue > new Date().getFullYear()) {
+      setInputValid(false);
+      setResponse("");
+    } else if (
+      (monthValue === "4" ||
+        monthValue === "6" ||
+        monthValue === "9" ||
+        monthValue === "11") &&
+      dayValue > "30"
+    ) {
+      setDateValid(false);
+      setResponse("");
+    } else if (monthValue === "2" && dayValue > "29") {
+      setDateValid(false);
+      setResponse("");
+    } else if (inputValid && dateValid && formValid) {
+      const newDate = `${inputYear.padStart(4, "0")}-${inputMonth.padStart(
+        2,
+        "0"
+      )}-${inputDay.padStart(2, "0")}`;
+      setResponse((response) => newDate);
+      setInputDay("");
+      setInputMonth("");
+      setInputYear("");
+      setInputValid(true);
+      setInputValid(true);
+      setInputValid(true);
+    }
   }
 
   return (
@@ -32,19 +83,43 @@ function App() {
       <Main>
         <div className="data">
           <AllInputs onSubmit={handleSubmit}>
-            <Input input={inputDay} onSetInput={handleSetInputDay}>
+            <Input
+              id={0}
+              placeholder="DD"
+              input={inputDay}
+              onSetInput={handleSetInputDay}
+              formValid={formValid}
+              inputValid={inputValid}
+              dateValid={dateValid}
+            >
               Day
             </Input>
-            <Input input={inputMonth} onSetInput={handleSetInputMonth}>
+            <Input
+              id={1}
+              placeholder="MM"
+              input={inputMonth}
+              onSetInput={handleSetInputMonth}
+              formValid={formValid}
+              inputValid={inputValid}
+              dateValid={dateValid}
+            >
               Month
             </Input>
-            <Input input={inputYear} onSetInput={handleSetInputYear}>
+            <Input
+              id={2}
+              placeholder="YYYY"
+              input={inputYear}
+              onSetInput={handleSetInputYear}
+              formValid={formValid}
+              inputValid={inputValid}
+              dateValid={dateValid}
+            >
               Year
             </Input>
             <Button />
           </AllInputs>
           <Output>
-            <Age />
+            <Age response={response} />
           </Output>
         </div>
       </Main>
@@ -56,19 +131,44 @@ function Main({ children }) {
   return <div className="main">{children}</div>;
 }
 
-function AllInputs({ children }) {
+function AllInputs({ children, onSubmit }) {
   return (
-    <form className="inputs" onSubmit={(e) => onSubmit(e)}>
+    <form className="inputs" onSubmit={onSubmit}>
       {children}
     </form>
   );
 }
 
-function Input({ children, input, onSetInput }) {
+function Input({
+  children,
+  input,
+  onSetInput,
+  placeholder,
+  formValid,
+  inputValid,
+  dateValid,
+  id,
+}) {
   return (
-    <div className="input-form">
+    <div
+      className={`input-form ${inputValid ? "" : "error"} ${
+        dateValid ? "" : "error"
+      } ${formValid ? "" : "error"}`}
+    >
       <label>{children.toUpperCase()}</label>
-      <input type="text" onChange={(e) => onSetInput(e)}></input>
+      <input
+        type="text"
+        onChange={(e) => onSetInput(e)}
+        value={input}
+        placeholder={placeholder}
+      ></input>
+      <span>
+        {!formValid && "This field is required"}
+        {!inputValid && id === 0 && "Must be a valid day"}
+        {!inputValid && id === 1 && "Must be a valid month"}
+        {!inputValid && id === 2 && "Must be in the past"}
+        {!dateValid && id === 0 && "Must be a valid date"}
+      </span>
     </div>
   );
 }
@@ -94,17 +194,52 @@ function Output({ children }) {
   return <div className="output-items">{children}</div>;
 }
 
-function Age() {
-  return (
+function Age({ response }) {
+  const todayObject = new Date();
+  const todayFormatted = `${
+    1 + todayObject.getMonth()
+  }/${todayObject.getDate()}/${todayObject.getFullYear()}`;
+
+  const time =
+    response &&
+    new Date(todayFormatted).getTime() - new Date(response).getTime();
+
+  const yearCalculated = response && time / (1000 * 60 * 60 * 24) / 365.25;
+  const monthCalculated = response && (yearCalculated % 1) * 12;
+  const daysCalculated = response && (monthCalculated % 1) * 30.42;
+
+  const years = yearCalculated && parseInt(yearCalculated);
+  const months = monthCalculated && parseInt(monthCalculated);
+  const days = daysCalculated && parseInt(daysCalculated);
+
+  return years && months && days ? (
     <>
       <p>
-        <span>38</span> years
+        <span>{years}</span>
+        {years === 1 ? " year" : " years"}
       </p>
       <p>
-        <span>2</span> months
+        <span>{months}</span>
+        {months === 1 ? " month" : " months"}
       </p>
       <p>
-        <span>26</span> days
+        <span>{days}</span>
+        {days === 1 ? " day" : " days"}
+      </p>
+    </>
+  ) : (
+    <>
+      <p>
+        <span>- - </span>
+        years
+      </p>
+      <p>
+        <span>- - </span>
+        months
+      </p>
+      <p>
+        <span>- - </span>
+        days
       </p>
     </>
   );

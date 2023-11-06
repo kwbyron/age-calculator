@@ -86,6 +86,26 @@ input {
   font-family: "Poppins", sans-serif;
 }
 
+input:hover {
+  transform: scale(1.2);
+  border-color: hsl(259, 100%, 65%);
+}
+
+.error {
+  color: hsl(0, 100%, 67%);
+  letter-spacing: normal;
+}
+
+.error input {
+  border-color: hsl(0, 100%, 67%);
+}
+
+.error span {
+  color: hsl(0, 100%, 67%);
+  justify-self: start;
+  font-weight: 400;
+}
+
 .output-items {
   display: grid;
   font-size: 6rem;
@@ -120,4 +140,8 @@ span {
   margin-left: 50px;
   border: none;
   background-color: hsl(259, 100%, 65%);
+}
+
+button:hover {
+  transform: scale(1.2);
 }
