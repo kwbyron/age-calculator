@@ -140,6 +140,7 @@ span {
   margin-left: 50px;
   border: none;
   background-color: hsl(259, 100%, 65%);
+  cursor: pointer;
 }
 
 button:hover {
