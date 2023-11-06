@@ -8,12 +8,14 @@ function App() {
   const [formValid, setFormValid] = useState(true);
   const [inputValid, setInputValid] = useState(true);
   const [dateValid, setDateValid] = useState(true);
+  const [isNumber, setIsNumber] = useState(true);
 
   function handleSetInputDay(e) {
     setInputDay((input) => e.target.value);
     setFormValid(true);
     setInputValid(true);
     setDateValid(true);
+    setIsNumber(true);
   }
 
   function handleSetInputMonth(e) {
@@ -21,12 +23,14 @@ function App() {
     setFormValid(true);
     setInputValid(true);
     setDateValid(true);
+    setIsNumber(true);
   }
   function handleSetInputYear(e) {
     setInputYear((input) => e.target.value);
     setFormValid(true);
     setInputValid(true);
     setDateValid(true);
+    setIsNumber(true);
   }
 
   function handleSubmit(e) {
@@ -35,6 +39,12 @@ function App() {
     const dayValue = e.target[0].value;
     const monthValue = e.target[1].value;
     const yearValue = e.target[2].value;
+
+    if (isNaN(dayValue) || isNaN(monthValue) || isNaN(yearValue)) {
+      console.log("not a number");
+      setIsNumber(false);
+      setResponse("");
+    }
 
     if (!dayValue || !monthValue || !yearValue) {
       setFormValid(false);
@@ -49,15 +59,15 @@ function App() {
       setInputValid(false);
       setResponse("");
     } else if (
-      (monthValue === "4" ||
-        monthValue === "6" ||
-        monthValue === "9" ||
-        monthValue === "11") &&
+      (monthValue == "4" ||
+        monthValue == "6" ||
+        monthValue == "9" ||
+        monthValue == "11") &&
       dayValue > "30"
     ) {
       setDateValid(false);
       setResponse("");
-    } else if (monthValue === "2" && dayValue > "29") {
+    } else if (monthValue == "2" && dayValue > "29") {
       setDateValid(false);
       setResponse("");
     } else if (inputValid && dateValid && formValid) {
@@ -88,6 +98,7 @@ function App() {
               formValid={formValid}
               inputValid={inputValid}
               dateValid={dateValid}
+              isNumber={isNumber}
             >
               Day
             </Input>
@@ -99,6 +110,7 @@ function App() {
               formValid={formValid}
               inputValid={inputValid}
               dateValid={dateValid}
+              isNumber={isNumber}
             >
               Month
             </Input>
@@ -110,6 +122,7 @@ function App() {
               formValid={formValid}
               inputValid={inputValid}
               dateValid={dateValid}
+              isNumber={isNumber}
             >
               Year
             </Input>
@@ -144,13 +157,14 @@ function Input({
   formValid,
   inputValid,
   dateValid,
+  isNumber,
   id,
 }) {
   return (
     <div
       className={`input-form ${inputValid ? "" : "error"} ${
         dateValid ? "" : "error"
-      } ${formValid ? "" : "error"}`}
+      } ${isNumber ? "" : "error"} ${formValid ? "" : "error"}`}
     >
       <label>{children.toUpperCase()}</label>
       <input
@@ -166,6 +180,7 @@ function Input({
         {!inputValid && id === 2 && "Must be in the past"}
         {!dateValid && id === 0 && "Must be a valid date"}
       </span>
+      <span>{!isNumber && "Input must be a number"}</span>
     </div>
   );
 }
