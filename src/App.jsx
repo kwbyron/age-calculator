@@ -41,7 +41,6 @@ function App() {
     const yearValue = e.target[2].value;
 
     if (isNaN(dayValue) || isNaN(monthValue) || isNaN(yearValue)) {
-      console.log("not a number");
       setIsNumber(false);
       setResponse("");
     }
@@ -79,8 +78,6 @@ function App() {
       setInputDay("");
       setInputMonth("");
       setInputYear("");
-      setInputValid(true);
-      setInputValid(true);
       setInputValid(true);
     }
   }
